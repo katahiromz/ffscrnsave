@@ -49,7 +49,7 @@ void message(INT uType, LPCWSTR fmt, ...)
 
 void version(void)
 {
-    message(MB_ICONINFORMATION, L"ffscrnsave version 0.0 by katahiromz");
+    message(MB_ICONINFORMATION, L"ffscrnsave version 0.1 by katahiromz");
 }
 
 void usage(void)
@@ -248,7 +248,7 @@ typedef struct FFSCRNSAVE
 
         if (filename.empty())
         {
-            message(MB_ICONERROR, L"No filename specified.");
+            message(MB_ICONERROR, L"ERROR: No filename specified.");
             return -1;
         }
 
@@ -260,13 +260,13 @@ typedef struct FFSCRNSAVE
 
         if (!registerClasses())
         {
-            message(MB_ICONERROR, L"Failed to register classes.");
+            message(MB_ICONERROR, L"ERROR: Failed to register classes.");
             return -2;
         }
 
         if (!createMainWnd())
         {
-            message(MB_ICONERROR, L"Failed to create the main window.");
+            message(MB_ICONERROR, L"ERROR: Failed to create the main window.");
             return -3;
         }
 
@@ -313,7 +313,7 @@ int wmain(INT argc, LPWSTR *argv)
             }
             else
             {
-                message(MB_ICONERROR, L"Option -x needs an option.");
+                message(MB_ICONERROR, L"ERROR: Option -x needs an option.");
                 return -1;
             }
         }
@@ -327,7 +327,7 @@ int wmain(INT argc, LPWSTR *argv)
             }
             else
             {
-                message(MB_ICONERROR, L"Option -y needs an option.");
+                message(MB_ICONERROR, L"ERROR: Option -y needs an option.");
                 return -1;
             }
         }
@@ -341,7 +341,7 @@ int wmain(INT argc, LPWSTR *argv)
             }
             else
             {
-                message(MB_ICONERROR, L"Option -left needs an option.");
+                message(MB_ICONERROR, L"ERROR: Option -left needs an option.");
                 return -1;
             }
         }
@@ -355,7 +355,7 @@ int wmain(INT argc, LPWSTR *argv)
             }
             else
             {
-                message(MB_ICONERROR, L"Option -top needs an option.");
+                message(MB_ICONERROR, L"ERROR: Option -top needs an option.");
                 return -1;
             }
         }
@@ -369,7 +369,7 @@ int wmain(INT argc, LPWSTR *argv)
             }
             else
             {
-                message(MB_ICONERROR, L"Option -window_title needs an option.");
+                message(MB_ICONERROR, L"ERROR: Option -window_title needs an option.");
                 return -1;
             }
         }
@@ -386,7 +386,7 @@ int wmain(INT argc, LPWSTR *argv)
 
         if (arg[0] == L'-')
         {
-            message(MB_ICONERROR, L"'%s' is invalid argument.", arg);
+            message(MB_ICONERROR, L"ERROR: '%s' is invalid argument.", arg);
             return -1;
         }
 
@@ -397,7 +397,7 @@ int wmain(INT argc, LPWSTR *argv)
         }
         else
         {
-            message(MB_ICONERROR, L"Too many argument.");
+            message(MB_ICONERROR, L"ERROR: Too many argument.");
             return -1;
         }
     }
