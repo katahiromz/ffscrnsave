@@ -49,7 +49,7 @@ void message(INT uType, LPCWSTR fmt, ...)
 
 void version(void)
 {
-    message(MB_ICONINFORMATION, L"ffscrnsave version 0.1 by katahiromz");
+    message(MB_ICONINFORMATION, L"ffscrnsave version 0.2 by katahiromz");
 }
 
 void usage(void)
@@ -57,13 +57,15 @@ void usage(void)
     message(MB_ICONINFORMATION,
         L"Usage: ffscrnsave [Options] your_file.scr\r\n"
         L"Options:\r\n"
-        L"  -left LEFT               Set the x position for the left of the window (default is a centered window).\r\n"
-        L"  -top TOP                 Set the y position for the top of the window (default is a centered window).\r\n"
         L"  -x WIDTH                 Force displayed width.\r\n"
         L"  -y HEIGHT                Force displayed height.\r\n"
+        L"  -left LEFT               Set the x position for the left of the window (default is a centered window).\r\n"
+        L"  -top TOP                 Set the y position for the top of the window (default is a centered window).\r\n"
         L"  -fs                      Start in fullscreen mode.\r\n"
         L"  -noborder                Borderless window.\r\n"
         L"  -window_title \"TITLE\"    Set window title (default is the input filename).\r\n"
+        L"  -help                    Display this message.\r\n"
+        L"  -version                 Display version information.\r\n"
     );
 }
 
