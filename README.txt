@@ -2,7 +2,6 @@
 
 ## Usage
 
-```txt
 Usage: ffscrnsave [Options] your_file.scr
 Options:
   -x WIDTH                 Force displayed width.
@@ -16,7 +15,6 @@ Options:
   -window_title "TITLE"    Set window title (default is the input filename).
   -help                    Display this message.
   -version                 Display version information.
-```
 
 ## License
 
