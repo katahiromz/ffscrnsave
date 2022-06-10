@@ -49,7 +49,7 @@ void message(INT uType, LPCWSTR fmt, ...)
 
 void version(void)
 {
-    message(MB_ICONINFORMATION, L"ffscrnsave version 0.5 by katahiromz");
+    message(MB_ICONINFORMATION, L"ffscrnsave version 0.7 by katahiromz");
 }
 
 void usage(void)
@@ -195,33 +195,42 @@ typedef struct FFSCRNSAVE
             style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
         }
 
-        RECT rcWork;
-        SystemParametersInfo(SPI_GETWORKAREA, 0, &rcWork, 0);
+        RECT rcWork = { 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) };
         SIZE sizWork = { (rcWork.right - rcWork.left), (rcWork.bottom - rcWork.top) };
+
+        if (x <= 0)
+            x = CW_USEDEFAULT;
+        if (y <= 0)
+            y = CW_USEDEFAULT;
 
         if (fullscreen)
         {
-            left = 0;
-            top = 0;
-            x = GetSystemMetrics(SM_CXSCREEN);
-            y = GetSystemMetrics(SM_CYSCREEN);
+            left = rcWork.left;
+            top = rcWork.top;
+            x = sizWork.cx;
+            y = sizWork.cy;
         }
         else
         {
-            if (x == CW_USEDEFAULT)
+            if (x != CW_USEDEFAULT && y == CW_USEDEFAULT)
+            {
+                y = x * 600 / 800;
+            }
+            else if (x == CW_USEDEFAULT && y != CW_USEDEFAULT)
+            {
+                x = y * 800 / 600;
+            }
+            else if (x == CW_USEDEFAULT && y == CW_USEDEFAULT)
+            {
                 x = sizWork.cx * 2 / 3;
-            if (y == CW_USEDEFAULT)
                 y = sizWork.cy * 2 / 3;
+            }
+
             if (left == CW_USEDEFAULT)
                 left = (sizWork.cx - x) / 2;
             if (top == CW_USEDEFAULT)
                 top  = (sizWork.cy - y) / 2;
         }
-
-        if (x <= 0)
-            x = sizWork.cx * 2 / 3;
-        if (y <= 0)
-            y = sizWork.cy * 2 / 3;
 
         RECT rc;
         rc.left = left;
@@ -257,10 +266,11 @@ typedef struct FFSCRNSAVE
         }
 
         WCHAR szFileName[MAX_PATH];
-        GetFullPathNameW(filename.c_str(), _countof(szFileName), szFileName, NULL);
+        LPWSTR pchFilePart;
+        GetFullPathNameW(filename.c_str(), _countof(szFileName), szFileName, &pchFilePart);
 
         if (window_title.empty())
-            window_title = szFileName;
+            window_title = pchFilePart;
 
         if (!registerClasses())
         {
