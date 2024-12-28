@@ -49,7 +49,7 @@ void message(INT uType, LPCWSTR fmt, ...)
 
 void version(void)
 {
-    message(MB_ICONINFORMATION, L"ffscrnsave version 0.7 by katahiromz");
+    message(MB_ICONINFORMATION, L"ffscrnsave version 0.8 by katahiromz");
 }
 
 void usage(void)
@@ -57,24 +57,29 @@ void usage(void)
     message(MB_ICONINFORMATION,
         L"Usage: ffscrnsave [Options] your_file.scr\r\n"
         L"Options:\r\n"
-        L"  -x WIDTH                 Force displayed width.\r\n"
-        L"  -y HEIGHT                Force displayed height.\r\n"
-        L"  -left LEFT               Set the x position for the left of the window\r\n"
-        L"                           (default is a centered window).\r\n"
-        L"  -top TOP                 Set the y position for the top of the window\r\n"
-        L"                           (default is a centered window).\r\n"
-        L"  -fs                      Start in fullscreen mode.\r\n"
-        L"  -noborder                Borderless window.\r\n"
-        L"  -window_title \"TITLE\"    Set window title (default is the input filename).\r\n"
-        L"  -help                    Display this message.\r\n"
-        L"  -version                 Display version information.\r\n"
+        L"  -i INPUT.scr           The input file.\r\n"
+        L"  -x WIDTH               Force displayed width.\r\n"
+        L"  -y HEIGHT              Force displayed height.\r\n"
+        L"  -left LEFT             Set the x position for the left of the window\r\n"
+        L"                         (default is a centered window).\r\n"
+        L"  -top TOP               Set the y position for the top of the window\r\n"
+        L"                         (default is a centered window).\r\n"
+        L"  -fs                    Start in fullscreen mode.\r\n"
+        L"  -noborder              Borderless window.\r\n"
+        L"  -window_title \"TITLE\"  Set window title (default is the input filename).\r\n"
+        L"  -help                  Display this message.\r\n"
+        L"  -version               Display version information.\r\n"
     );
 }
 
 BOOL startSaver(HWND hwnd, LPCWSTR filename)
 {
+    std::wstring fname = filename;
+    if (GetFileAttributesW(fname.c_str()) == INVALID_FILE_ATTRIBUTES)
+        fname += L".scr";
+
     WCHAR szBuf[MAX_PATH * 2];
-    StringCchPrintfW(szBuf, _countof(szBuf), L"\"%s\" /p %u", filename, (UINT)(UINT_PTR)hwnd);
+    StringCchPrintfW(szBuf, _countof(szBuf), L"\"%s\" /p %u", fname.c_str(), (UINT)(UINT_PTR)hwnd);
 
     STARTUPINFOW si = { sizeof(si) };
     PROCESS_INFORMATION pi = { NULL };
@@ -387,6 +392,25 @@ int wmain(INT argc, LPWSTR *argv)
                 return -1;
             }
         }
+        if (lstrcmpiW(arg, L"-i") == 0)
+        {
+            arg = argv[++iarg];
+            if (iarg < argc)
+            {
+                if (ffscrnsave.filename.empty())
+                {
+                    ffscrnsave.filename = arg;
+                    continue;
+                }
+                message(MB_ICONERROR, L"ERROR: Too many arguments.");
+                return -1;
+            }
+            else
+            {
+                message(MB_ICONERROR, L"ERROR: Option -i needs an option.");
+                return -1;
+            }
+        }
         if (lstrcmpiW(arg, L"-fs") == 0)
         {
             ffscrnsave.fullscreen = true;
@@ -411,7 +435,7 @@ int wmain(INT argc, LPWSTR *argv)
         }
         else
         {
-            message(MB_ICONERROR, L"ERROR: Too many argument.");
+            message(MB_ICONERROR, L"ERROR: Too many arguments.");
             return -1;
         }
     }

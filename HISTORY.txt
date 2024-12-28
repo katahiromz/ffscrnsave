@@ -1,0 +1,8 @@
+# The history of ffscrnsave
+
+- 2022-07-08 Ver.0.0
+    - First release.
+- 2024-12-28 Ver.0.8
+    - Added "-i" option.
+    - Adding ".scr" extension if not found.
+    - Improved dialog box.
