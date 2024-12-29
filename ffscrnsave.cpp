@@ -67,7 +67,8 @@ void usage(void)
         L"                        (default is centered).\r\n"
         L"  -fs                   Start in fullscreen mode.\r\n"
         L"  -noborder             Create a borderless window.\r\n"
-        L"  -window_title TITLE   Set the window title (default is the input filename).\r\n"
+        L"  -window_title TITLE   Set the window title (default is the input\r\n"
+        L"                        filename).\r\n"
         L"  -help                 Display this help message.\r\n"
         L"  -version              Display version information.\r\n"
     );

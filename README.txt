@@ -14,7 +14,8 @@ Options:
                         (default is centered).
   -fs                   Start in fullscreen mode.
   -noborder             Create a borderless window.
-  -window_title TITLE   Set the window title (default is the input filename).
+  -window_title TITLE   Set the window title (default is the input
+                        filename).
   -help                 Display this help message.
   -version              Display version information.
 
