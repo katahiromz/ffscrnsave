@@ -313,16 +313,19 @@ int wmain(INT argc, LPWSTR *argv)
     for (INT iarg = 1; iarg < argc; ++iarg)
     {
         LPWSTR arg = argv[iarg];
+
         if (lstrcmpiW(arg, L"-help") == 0 || lstrcmpiW(arg, L"--help") == 0)
         {
             usage();
             return 0;
         }
+
         if (lstrcmpiW(arg, L"-version") == 0 || lstrcmpiW(arg, L"--version") == 0)
         {
             version();
             return 0;
         }
+
         if (lstrcmpiW(arg, L"-x") == 0)
         {
             arg = argv[++iarg];
@@ -337,6 +340,7 @@ int wmain(INT argc, LPWSTR *argv)
                 return -1;
             }
         }
+
         if (lstrcmpiW(arg, L"-y") == 0)
         {
             arg = argv[++iarg];
@@ -351,7 +355,8 @@ int wmain(INT argc, LPWSTR *argv)
                 return -1;
             }
         }
-        if (lstrcmpiW(arg, L"-left") == 0)
+
+        if (lstrcmpiW(arg, L"-left") == 0 || lstrcmpiW(arg, L"--left") == 0)
         {
             arg = argv[++iarg];
             if (iarg < argc)
@@ -365,7 +370,8 @@ int wmain(INT argc, LPWSTR *argv)
                 return -1;
             }
         }
-        if (lstrcmpiW(arg, L"-top") == 0)
+
+        if (lstrcmpiW(arg, L"-top") == 0 || lstrcmpiW(arg, L"--top") == 0)
         {
             arg = argv[++iarg];
             if (iarg < argc)
@@ -379,7 +385,8 @@ int wmain(INT argc, LPWSTR *argv)
                 return -1;
             }
         }
-        if (lstrcmpiW(arg, L"-window_title") == 0)
+
+        if (lstrcmpiW(arg, L"-window_title") == 0 || lstrcmpiW(arg, L"--window_title") == 0)
         {
             arg = argv[++iarg];
             if (iarg < argc)
@@ -393,6 +400,7 @@ int wmain(INT argc, LPWSTR *argv)
                 return -1;
             }
         }
+
         if (lstrcmpiW(arg, L"-i") == 0)
         {
             arg = argv[++iarg];
@@ -412,12 +420,14 @@ int wmain(INT argc, LPWSTR *argv)
                 return -1;
             }
         }
-        if (lstrcmpiW(arg, L"-fs") == 0)
+
+        if (lstrcmpiW(arg, L"-fs") == 0 || lstrcmpiW(arg, L"--fs") == 0)
         {
             ffscrnsave.fullscreen = true;
             continue;
         }
-        if (lstrcmpiW(arg, L"-noborder") == 0)
+
+        if (lstrcmpiW(arg, L"-noborder") == 0 || lstrcmpiW(arg, L"--noborder") == 0)
         {
             ffscrnsave.noborder = true;
             continue;
