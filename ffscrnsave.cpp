@@ -49,26 +49,27 @@ void message(INT uType, LPCWSTR fmt, ...)
 
 void version(void)
 {
-    message(MB_ICONINFORMATION, L"ffscrnsave version 0.8 by katahiromz");
+    message(MB_ICONINFORMATION, L"ffscrnsave version 0.9 by katahiromz");
 }
 
 void usage(void)
 {
     message(MB_ICONINFORMATION,
         L"Usage: ffscrnsave [Options] your_file.scr\r\n"
+        L"\r\n"
         L"Options:\r\n"
-        L"  -i INPUT.scr           The input file.\r\n"
-        L"  -x WIDTH               Force displayed width.\r\n"
-        L"  -y HEIGHT              Force displayed height.\r\n"
-        L"  -left LEFT             Set the x position for the left of the window\r\n"
-        L"                         (default is a centered window).\r\n"
-        L"  -top TOP               Set the y position for the top of the window\r\n"
-        L"                         (default is a centered window).\r\n"
-        L"  -fs                    Start in fullscreen mode.\r\n"
-        L"  -noborder              Borderless window.\r\n"
-        L"  -window_title \"TITLE\"  Set window title (default is the input filename).\r\n"
-        L"  -help                  Display this message.\r\n"
-        L"  -version               Display version information.\r\n"
+        L"  -i INPUT.scr          Specify the input file.\r\n"
+        L"  -x WIDTH              Set the displayed width.\r\n"
+        L"  -y HEIGHT             Set the displayed height.\r\n"
+        L"  -left LEFT            Specify the x position of the window's left edge\r\n"
+        L"                        (default is centered).\r\n"
+        L"  -top TOP              Specify the y position of the window's top edge\r\n"
+        L"                        (default is centered).\r\n"
+        L"  -fs                   Start in fullscreen mode.\r\n"
+        L"  -noborder             Create a borderless window.\r\n"
+        L"  -window_title TITLE   Set the window title (default is the input filename).\r\n"
+        L"  -help                 Display this help message.\r\n"
+        L"  -version              Display version information.\r\n"
     );
 }
 

@@ -6,3 +6,5 @@
     - Added "-i" option.
     - Adding ".scr" extension if not found.
     - Improved dialog box.
+- 2024-12-29 Ver.0.9
+    - Improved English.
