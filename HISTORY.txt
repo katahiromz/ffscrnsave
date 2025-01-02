@@ -8,3 +8,5 @@
     - Improved dialog box.
 - 2024-12-29 Ver.0.9
     - Improved English.
+- 2025-01-02 Ver.1.0
+    - Made it resizable.

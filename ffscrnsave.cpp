@@ -49,7 +49,7 @@ void message(INT uType, LPCWSTR fmt, ...)
 
 void version(void)
 {
-    message(MB_ICONINFORMATION, L"ffscrnsave version 0.9 by katahiromz");
+    message(MB_ICONINFORMATION, L"ffscrnsave version 1.0 by katahiromz");
 }
 
 void usage(void)
