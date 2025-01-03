@@ -1,4 +1,14 @@
-# The history of ffscrnsave
+﻿(Japanese, UTF-8)
+
+# FFscrnsaveの開発履歴
+
+- 2025-01-03 Ver.1.2
+    - ユーザーインターフェイスを改良。
+
+---
+(English)
+
+# The history of FFscrnsave
 
 - 2022-07-08 Ver.0.0
     - First release.
@@ -10,5 +20,5 @@
     - Improved English.
 - 2025-01-02 Ver.1.0
     - Made it resizable.
-- 2025-XX-YY Ver.1.2
+- 2025-01-03 Ver.1.2
     - Improved user interface.
