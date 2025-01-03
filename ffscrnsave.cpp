@@ -1,77 +1,119 @@
+﻿// FFscrnsave - A ScreenSaver viewer for Windows
+// License: MIT
+
+// Detect memory leaks (for Debug and MSVC)
+#if defined(_MSC_VER) && !defined(NDEBUG) && !defined(_CRTDBG_MAP_ALLOC)
+    #define _CRTDBG_MAP_ALLOC
+    #include <crtdbg.h>
+#endif
+
 #include <windows.h>
 #include <windowsx.h>
 #include <commctrl.h>
-#include <strsafe.h>
+#include <shlwapi.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cassert>
 #include <string>
+#include <tchar.h>
+#include <strsafe.h>
 
 #define CLASSNAME  L"ffscrnsave"
 
+inline WORD get_lang_id(void)
+{
+    return PRIMARYLANGID(LANGIDFROMLCID(GetThreadLocale()));
+}
+
+// localization
+LPCTSTR get_text(INT id)
+{
+#ifdef JAPAN
+    if (get_lang_id() == LANG_JAPANESE) // Japone for Japone
+    {
+        switch (id)
+        {
+        case 0: return TEXT("ffscrnsave バージョン 1.2 by 片山博文MZ");
+        case 1:
+            return TEXT("使用方法: ffscrnsave [オプション] your_file.scr\n")
+                   TEXT("オプション:\n")
+                   TEXT("  -i INPUT.scr            入力ファイルを指定します。\n")
+                   TEXT("  -x WIDTH                表示される幅を設定します。\n")
+                   TEXT("  -y HEIGHT               表示される高さを設定します。\n")
+                   TEXT("  -left LEFT              ウィンドウの左端の位置を指定します。\n")
+                   TEXT("                          (デフォルトでは中央に配置されます)\n")
+                   TEXT("  -top TOP                ウィンドウの上端の位置を指定します。\n")
+                   TEXT("                          (デフォルトでは中央に配置されます)\n")
+                   TEXT("  -fs                     全画面モードで開始します。\n")
+                   TEXT("  -noborder               枠のないウィンドウを作成します。\n")
+                   TEXT("  -window_title TITLE     ウィンドウのタイトルを設定します。\n")
+                   TEXT("                          (デフォルトでは入力ファイル名が使用されます)\n")
+                   TEXT("  -help                   このヘルプメッセージを表示します。\n")
+                   TEXT("  -version                バージョン情報を表示します。");
+        case 2: return TEXT("エラー: ファイル名が未指定です。\n");
+        case 3: return TEXT("エラー: クラスの登録に失敗しました。\n");
+        case 4: return TEXT("エラー: メインウィンドウの作成に失敗しました。\n");
+        case 5: return TEXT("エラー: オプション -x は引数が必要です。\n");
+        case 6: return TEXT("エラー: オプション -y は引数が必要です。\n");
+        case 7: return TEXT("エラー: オプション -left は引数が必要です。\n");
+        case 8: return TEXT("エラー: オプション -top は引数が必要です。\n");
+        case 9: return TEXT("エラー: オプション -window_title は引数が必要です。\n");
+        case 10: return TEXT("エラー: 引数が多すぎます。\n");
+        case 11: return TEXT("エラー: オプション -i は引数が必要です。\n");
+        case 12: return TEXT("エラー: '%s' は不正な引数です。\n");
+        }
+    }
+    else // The others are Let's la English
+#endif
+    {
+        switch (id)
+        {
+        case 0: return TEXT("ffscrnsave version 1.2 by katahiromz");
+        case 1:
+            return TEXT("Usage: ffscrnsave [Options] your_file.scr\n")
+                   TEXT("\n")
+                   TEXT("Options:\n")
+                   TEXT("  -i INPUT.scr          Specify the input file.\n")
+                   TEXT("  -x WIDTH              Set the displayed width.\n")
+                   TEXT("  -y HEIGHT             Set the displayed height.\n")
+                   TEXT("  -left LEFT            Specify the x position of the window's left edge\n")
+                   TEXT("                        (default is centered).\n")
+                   TEXT("  -top TOP              Specify the y position of the window's top edge\n")
+                   TEXT("                        (default is centered).\n")
+                   TEXT("  -fs                   Start in fullscreen mode.\n")
+                   TEXT("  -noborder             Create a borderless window.\n")
+                   TEXT("  -window_title TITLE   Set the window title (default is the input\n")
+                   TEXT("                        filename).\n")
+                   TEXT("  -help                 Display this help message.\n")
+                   TEXT("  -version              Display version information.");
+        case 2: return TEXT("ERROR: No filename specified.\n");
+        case 3: return TEXT("ERROR: Failed to register classes.\n");
+        case 4: return TEXT("ERROR: Failed to create the main window.\n");
+        case 5: return TEXT("ERROR: Option -x needs an operand.\n");
+        case 6: return TEXT("ERROR: Option -y needs an operand.\n");
+        case 7: return TEXT("ERROR: Option -left needs an operand.\n");
+        case 8: return TEXT("ERROR: Option -top needs an operand.\n");
+        case 9: return TEXT("ERROR: Option -window_title needs an operand.\n");
+        case 10: return TEXT("ERROR: Too many arguments.\n");
+        case 11: return TEXT("ERROR: Option -i needs an operand.\n");
+        case 12: return TEXT("ERROR: '%s' is invalid argument.\n");
+        }
+    }
+
+    assert(0);
+    return nullptr;
+}
+
 HWND g_hMainWnd = NULL;
-
-BOOL OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
-{
-    LPCWSTR psz = (LPCWSTR)lParam;
-    SetDlgItemTextW(hwnd, edt1, psz);
-    return TRUE;
-}
-
-void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
-{
-    switch (id)
-    {
-    case IDOK:
-    case IDCANCEL:
-        EndDialog(hwnd, id);
-        break;
-    }
-}
-
-INT_PTR CALLBACK
-DialogProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-    switch (uMsg)
-    {
-        HANDLE_MSG(hwnd, WM_INITDIALOG, OnInitDialog);
-        HANDLE_MSG(hwnd, WM_COMMAND, OnCommand);
-    }
-    return 0;
-}
-
-void message(INT uType, LPCWSTR fmt, ...)
-{
-    va_list va;
-    va_start(va, fmt);
-    WCHAR buf[1024];
-    StringCchVPrintfW(buf, _countof(buf), fmt, va);
-    DialogBoxParamW(GetModuleHandleW(NULL), MAKEINTRESOURCEW(1), NULL, DialogProc, (LPARAM)buf);
-    va_end(va);
-}
 
 void version(void)
 {
-    message(MB_ICONINFORMATION, L"ffscrnsave version 1.0 by katahiromz");
+    _putts(get_text(0));
 }
 
 void usage(void)
 {
-    message(MB_ICONINFORMATION,
-        L"Usage: ffscrnsave [Options] your_file.scr\r\n"
-        L"\r\n"
-        L"Options:\r\n"
-        L"  -i INPUT.scr          Specify the input file.\r\n"
-        L"  -x WIDTH              Set the displayed width.\r\n"
-        L"  -y HEIGHT             Set the displayed height.\r\n"
-        L"  -left LEFT            Specify the x position of the window's left edge\r\n"
-        L"                        (default is centered).\r\n"
-        L"  -top TOP              Specify the y position of the window's top edge\r\n"
-        L"                        (default is centered).\r\n"
-        L"  -fs                   Start in fullscreen mode.\r\n"
-        L"  -noborder             Create a borderless window.\r\n"
-        L"  -window_title TITLE   Set the window title (default is the input\r\n"
-        L"                        filename).\r\n"
-        L"  -help                 Display this help message.\r\n"
-        L"  -version              Display version information.\r\n"
-    );
+    _putts(get_text(1));
 }
 
 BOOL startSaver(HWND hwnd, LPCWSTR filename)
@@ -134,14 +176,21 @@ int OnMouseActivate(HWND hwnd, HWND hwndTopLevel, UINT codeHitTest, UINT msg)
     return MA_ACTIVATE;
 }
 
-void OnNCMouseMove(HWND hwnd, int x, int y, UINT codeHitTest)
+void OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 {
     SetCursor(LoadCursor(NULL, IDC_ARROW));
 }
 
-void OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
+void OnSize(HWND hwnd, UINT state, int cx, int cy)
 {
-    SetCursor(LoadCursor(NULL, IDC_ARROW));
+    HWND hChild = GetTopWindow(hwnd);
+    if (hChild)
+    {
+        RECT rc;
+        GetClientRect(hwnd, &rc);
+        MoveWindow(hChild, 0, 0, rc.right, rc.bottom, TRUE);
+        PostMessage(hChild, WM_DISPLAYCHANGE, 32, MAKELONG(rc.right, rc.bottom));
+    }
 }
 
 LRESULT CALLBACK
@@ -153,10 +202,10 @@ WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         HANDLE_MSG(hwnd, WM_LBUTTONDOWN, OnLButtonDown);
         HANDLE_MSG(hwnd, WM_LBUTTONDBLCLK, OnLButtonDown);
         HANDLE_MSG(hwnd, WM_MOUSEACTIVATE, OnMouseActivate);
-        HANDLE_MSG(hwnd, WM_NCMOUSEMOVE, OnNCMouseMove);
         HANDLE_MSG(hwnd, WM_MOUSEMOVE, OnMouseMove);
         HANDLE_MSG(hwnd, WM_KEYDOWN, OnKey);
         HANDLE_MSG(hwnd, WM_KEYUP, OnKey);
+        HANDLE_MSG(hwnd, WM_SIZE, OnSize);
         HANDLE_MSG(hwnd, WM_DESTROY, OnDestroy);
     default:
         return DefWindowProcW(hwnd, uMsg, wParam, lParam);
@@ -194,13 +243,9 @@ typedef struct FFSCRNSAVE
         DWORD style, exstyle = WS_EX_TOPMOST;
 
         if (noborder || fullscreen)
-        {
             style = WS_POPUPWINDOW;
-        }
         else
-        {
-            style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
-        }
+            style = WS_OVERLAPPEDWINDOW;
 
         RECT rcWork = { 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) };
         SIZE sizWork = { (rcWork.right - rcWork.left), (rcWork.bottom - rcWork.top) };
@@ -262,13 +307,13 @@ typedef struct FFSCRNSAVE
         return TRUE;
     }
 
-    int just_do_it(void)
+    int run(void)
     {
         InitCommonControls();
 
         if (filename.empty())
         {
-            message(MB_ICONERROR, L"ERROR: No filename specified.");
+            _ftprintf(stderr, get_text(2));
             return -1;
         }
 
@@ -281,15 +326,17 @@ typedef struct FFSCRNSAVE
 
         if (!registerClasses())
         {
-            message(MB_ICONERROR, L"ERROR: Failed to register classes.");
+            _ftprintf(stderr, get_text(3));
             return -2;
         }
 
         if (!createMainWnd())
         {
-            message(MB_ICONERROR, L"ERROR: Failed to create the main window.");
+            _ftprintf(stderr, get_text(4));
             return -3;
         }
+
+        FreeConsole();
 
         MSG msg;
         while (GetMessageW(&msg, NULL, 0, 0))
@@ -337,7 +384,7 @@ int wmain(INT argc, LPWSTR *argv)
             }
             else
             {
-                message(MB_ICONERROR, L"ERROR: Option -x needs an option.");
+                _ftprintf(stderr, get_text(5));
                 return -1;
             }
         }
@@ -352,7 +399,7 @@ int wmain(INT argc, LPWSTR *argv)
             }
             else
             {
-                message(MB_ICONERROR, L"ERROR: Option -y needs an option.");
+                _ftprintf(stderr, get_text(6));
                 return -1;
             }
         }
@@ -367,7 +414,7 @@ int wmain(INT argc, LPWSTR *argv)
             }
             else
             {
-                message(MB_ICONERROR, L"ERROR: Option -left needs an option.");
+                _ftprintf(stderr, get_text(7));
                 return -1;
             }
         }
@@ -382,7 +429,7 @@ int wmain(INT argc, LPWSTR *argv)
             }
             else
             {
-                message(MB_ICONERROR, L"ERROR: Option -top needs an option.");
+                _ftprintf(stderr, get_text(8));
                 return -1;
             }
         }
@@ -397,7 +444,7 @@ int wmain(INT argc, LPWSTR *argv)
             }
             else
             {
-                message(MB_ICONERROR, L"ERROR: Option -window_title needs an option.");
+                _ftprintf(stderr, get_text(9));
                 return -1;
             }
         }
@@ -412,12 +459,12 @@ int wmain(INT argc, LPWSTR *argv)
                     ffscrnsave.filename = arg;
                     continue;
                 }
-                message(MB_ICONERROR, L"ERROR: Too many arguments.");
+                _ftprintf(stderr, get_text(10));
                 return -1;
             }
             else
             {
-                message(MB_ICONERROR, L"ERROR: Option -i needs an option.");
+                _ftprintf(stderr, get_text(11));
                 return -1;
             }
         }
@@ -436,7 +483,7 @@ int wmain(INT argc, LPWSTR *argv)
 
         if (arg[0] == L'-')
         {
-            message(MB_ICONERROR, L"ERROR: '%s' is invalid argument.", arg);
+            _ftprintf(stderr, get_text(12), arg);
             return -1;
         }
 
@@ -447,23 +494,39 @@ int wmain(INT argc, LPWSTR *argv)
         }
         else
         {
-            message(MB_ICONERROR, L"ERROR: Too many arguments.");
+            _ftprintf(stderr, get_text(10));
             return -1;
         }
     }
 
-    return ffscrnsave.just_do_it();
+    return ffscrnsave.run();
 }
 
-INT WINAPI
-WinMain(HINSTANCE   hInstance,
-        HINSTANCE   hPrevInstance,
-        LPSTR       lpCmdLine,
-        INT         nCmdShow)
+#include <clocale>
+
+int main(void)
 {
+    // Unicode console output support
+    std::setlocale(LC_ALL, "");
+
     INT myargc;
     LPWSTR *myargv = CommandLineToArgvW(GetCommandLineW(), &myargc);
     INT ret = wmain(myargc, myargv);
     LocalFree(myargv);
+
+    // Detect handle leaks (for Debug)
+#if (_WIN32_WINNT >= 0x0500) && !defined(NDEBUG)
+    TCHAR szText[MAX_PATH];
+    wnsprintf(szText, _countof(szText), TEXT("GDI Objects: %ld, User Objects: %ld\n"),
+              GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS),
+              GetGuiResources(GetCurrentProcess(), GR_USEROBJECTS));
+    OutputDebugString(szText);
+#endif
+
+    // Detect memory leaks (for Debug and MSVC)
+#if defined(_MSC_VER) && !defined(NDEBUG)
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
     return ret;
 }

@@ -10,3 +10,5 @@
     - Improved English.
 - 2025-01-02 Ver.1.0
     - Made it resizable.
+- 2025-XX-YY Ver.1.2
+    - Improved user interface.
